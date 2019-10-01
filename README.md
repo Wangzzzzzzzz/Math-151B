@@ -3,6 +3,7 @@
 ## Scores of each homework
 
 | Homework number | Score |
+|------|-------|
 | #1 | 100 |
 | #2 | 100 |
 | #3 | 100 |
