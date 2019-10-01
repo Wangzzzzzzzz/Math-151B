@@ -1,0 +1,118 @@
+\documentclass[11pt]{article}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage[space]{grffile}
+\usepackage{adjustbox}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{fullpage}
+\usepackage{fancyhdr}
+\usepackage{xparse}
+\usepackage[makeroom]{cancel}
+\newcommand{\ctitle}[3]{\title{\vspace{-0.5in}\cnum, \ced\\Problem Set #1: #2}}
+\usepackage[usenames,dvipsnames,svgnames,table,hyperref]{xcolor}
+\usepackage{listings}
+\usepackage{color} %red, green, blue, yellow, cyan, magenta, black, white
+\definecolor{mygreen}{RGB}{28,172,0} % color values Red, Green, Blue
+\definecolor{mylilas}{RGB}{170,55,241}
+
+\renewcommand*{\theenumi}{\alph{enumi}}
+\renewcommand*\labelenumi{(\theenumi)}
+\renewcommand*{\theenumii}{\roman{enumii}}
+\renewcommand*\labelenumii{\theenumii.}
+
+\author{Zheng Wang (404855295)}
+\date{\today}
+\title{MATH 151B Homework 7}
+
+\begin{document}
+
+\lstset{language=Matlab,%
+	basicstyle=\footnotesize,
+	breaklines=true,%
+	morekeywords={matlab2tikz},
+	keywordstyle=\color{blue},%
+	morekeywords=[2]{1}, keywordstyle=[2]{\color{black}},
+	identifierstyle=\color{black},%
+	stringstyle=\color{mylilas},
+	commentstyle=\color{mygreen},%
+	showstringspaces=false,%without this there will be a symbol in the places where there is a space
+	numbers=left,%
+	numberstyle={\tiny \color{black}},% size of the numbers
+	numbersep=9pt, % this defines how far the numbers are from the text
+	emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasise
+	%emph=[2]{word1,word2}, emphstyle=[2]{style},
+}
+
+\maketitle
+
+\textbf{The two questions I selected are Question 2 and Question 3.}\\
+\section*{Question 2}
+The idea behind the inverse power method is that for any matrix $ A $ with eigenvalues $ \lambda_1, \lambda_2,...\ , \lambda_n $, the eigenvalues of $ A -q I$ are $ \lambda_1-q, \lambda_2-q,...\ , \lambda_n-q $. Moreover, for the matrix $ (A-qI)^{-1}$, the eigenvalues are $ \displaystyle \frac{1}{\lambda_1-q}, \frac{1}{\lambda_2-q},...\ ,  \frac{1}{\lambda_n-q} $.
+Then when we apply the power method to find the largest eigenvalue of $ (A-q I)^{-1} $, the result will be the eigenvalue $\lambda_k$ that is closest to $q$, as the closer $\lambda_k$ is to $q$, the larger is $\displaystyle \frac{1}{\lambda_k - q}$.\\
+I program the following code to run the inverse power method to the matrix $\begin{bmatrix}
+3 & 3 & 3\\
+4 & 9 & 2\\
+5 & 2 & 3
+\end{bmatrix}$:
+
+\lstinputlisting{q2.m}
+
+I obtian the following from the console:
+\begin{verbatim}
+>> q2
+Using q = 5
+The eigenvalue find is:
+    4.0000
+
+The corresponding eigenvector find is:
+    0.5294
+   -0.8235
+    1.0000
+
+Using q = 2
+The eigenvalue find is:
+    4.0000
+
+The corresponding eigenvector find is:
+    0.5294
+   -0.8235
+    1.0000
+\end{verbatim}
+
+Thus using $ q = 2$ or $ q = 5$ both give us the closest eigenvalue $\boxed{4}$ and eigenvector $ \boxed{(0.5294,-0.8235,1.0000)^T}$. This is expected, since the eigenvalues are $ 12,4,-1$, so the closest eigenvalue to both $2$ and $5$ is $4$.
+
+
+\section*{Question 3}
+In the proof to this problem, we will use the following theorem:\\\\
+\textbf{Theorem:}\\
+For a self-adjoint matrix $A$ (AKA symmetric), suppose the eigenvalues are all distincts, then its eigenvectors are all orthogonal.\\\\
+\textit{proof:}\\
+Let $\mathbf{x}$ and $\mathbf{y}$ be eigenvectors of $A$. Then, we see that the following is true by definition of adjoint of $A$
+\[ \langle A\mathbf{x}, \mathbf{y} \rangle = \langle \mathbf{x}, A^T\mathbf{y} \rangle = \langle \mathbf{x}, A\mathbf{y} \rangle\]
+Since $\mathbf{x}$ and $\mathbf{y}$ are eigenvectors, say that that they are associtated with distinct eigenvalues $\lambda$ and $\mu$ respectively, then we can expand out the above equation as:
+\[ \lambda\langle \mathbf{x}, \mathbf{y} \rangle  =  \langle A\mathbf{x}, \mathbf{y} \rangle = \langle \mathbf{x}, A\mathbf{y} \rangle = \mu \langle \mathbf{x}, \mathbf{y} \rangle \]
+Thus, $ (\mu - \lambda)\langle \mathbf{x}, \mathbf{y} \rangle = 0$, but $(\mu -\lambda) \neq 0 $, thus, we have $\langle \mathbf{x}, \mathbf{y} \rangle = \mathbf{x}^T\mathbf{y} = 0$, so $\mathbf{x}$ and $\mathbf{y}$ are orthogonal. \\\\
+
+Then we can proceed prove the statement, let $\mathbf{v_1},\mathbf{v_2},\ ..., \mathbf{v_n}$ be the eigenvectors associated with eigenvalues $\lambda_1, \lambda_2,\ ..., \lambda_n$ respectively.
+Then, for the eigenvector $\mathbf{v_1}$, we have
+\begin{align*}
+B\mathbf{v_1} &= \left(A- \frac{\lambda_1\mathbf{v_1}\mathbf{v_1}^T}{\mathbf{v_1}^T\mathbf{v_1}}\right)\mathbf{v_1}\\
+& = A\mathbf{v_1} - \frac{\lambda_1\mathbf{v_1}\mathbf{v_1}^T\mathbf{v_1}}{\mathbf{v_1}^T\mathbf{v_1}}\\
+& = (A-\lambda_1 I)\mathbf{v_1}\\
+& = 0\cdot \mathbf{v_1}
+\end{align*}
+Thus, we see that $\mathbf{v_1}$ is an eigenvector or $B$ with eigenvalue $0$.
+Next, for $\mathbf{v_k}$, where $k = 2,3,\ ...,\ n $, we have the following by the \textbf{Theorem} we proved above:
+\begin{align*}
+	B\mathbf{v_k} &= \left(A- \frac{\lambda_1\mathbf{v_1}\mathbf{v_1}^T}{\mathbf{v_1}^T\mathbf{v_1}}\right)\mathbf{v_k}\\
+	& = A\mathbf{v_k} - \frac{\lambda_1\mathbf{v_1}\mathbf{v_1}^T\mathbf{v_k}}{\mathbf{v_1}^T\mathbf{v_1}}\\
+	& = A\mathbf{v_k} + \mathbf{0}\\
+	& = \lambda_k \cdot \mathbf{v_k}
+\end{align*}
+Therefore, we can see that $\mathbf{v_k}$ is an eigenvector of $B$ with eigenvalue $\lambda_k$ for any $k = 2,3,..,n$. Combine the statement above, we proved the statement in the question. \hfill $\blacksquare$
+
+\end{document}

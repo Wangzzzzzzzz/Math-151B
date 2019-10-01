@@ -1,0 +1,151 @@
+\documentclass[11pt]{article}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage[space]{grffile}
+\usepackage{adjustbox}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{fullpage}
+\usepackage{fancyhdr}
+\usepackage{xparse}
+\usepackage[makeroom]{cancel}
+\newcommand{\cnum}{CM146}
+\newcommand{\ced}{Fall 2018}
+\newcommand{\ctitle}[3]{\title{\vspace{-0.5in}\cnum, \ced\\Problem Set #1: #2}}
+\newcommand{\solution}[1]{{{\color{blue}{\bf Solution:} {#1}}}}
+\NewDocumentCommand{\texcod}{mm}{%
+	\texttt{\textcolor{#1}{#2}}%
+}
+\usepackage[usenames,dvipsnames,svgnames,table,hyperref]{xcolor}
+\usepackage{listings}
+\usepackage{color} %red, green, blue, yellow, cyan, magenta, black, white
+\definecolor{mygreen}{RGB}{28,172,0} % color values Red, Green, Blue
+\definecolor{mylilas}{RGB}{170,55,241}
+
+\renewcommand*{\theenumi}{\alph{enumi}}
+\renewcommand*\labelenumi{(\theenumi)}
+\renewcommand*{\theenumii}{\roman{enumii}}
+\renewcommand*\labelenumii{\theenumii.}
+
+\author{Zheng Wang (404855295)}
+\date{\today}
+\title{MATH 151B Homework 4}
+
+\begin{document}
+	
+\lstset{language=Matlab,%
+	basicstyle=\footnotesize,
+	breaklines=true,%
+	morekeywords={matlab2tikz},
+	keywordstyle=\color{blue},%
+	morekeywords=[2]{1}, keywordstyle=[2]{\color{black}},
+	identifierstyle=\color{black},%
+	stringstyle=\color{mylilas},
+	commentstyle=\color{mygreen},%
+	showstringspaces=false,%without this there will be a symbol in the places where there is a space
+	numbers=left,%
+	numberstyle={\tiny \color{black}},% size of the numbers
+	numbersep=9pt, % this defines how far the numbers are from the text
+	emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasise
+	%emph=[2]{word1,word2}, emphstyle=[2]{style},    
+}
+
+\maketitle
+\section*{Question 1}
+Using the equation of the Newton's backward-difference formula, we have the following by seting $ t = t_i + sh $:
+\begin{align*}
+y(t_{i+1}) &\approx y(t_i) + \int_{t_i}^{t_{i+1}}\sum_{k=0}^{3}(-1)^k {-s \choose k} \nabla^K f(t_i,y(t_i))\ dt\\
+&=y(t_i) + \sum_{k=0}^{3}\nabla^kf(t_i,y(t_i))h(-1)^k\int_{0}^{1} {-s \choose k}\ ds \qquad\qquad\qquad \text{(By taking $ dt = h\ ds $)}\\
+&=y(t_i) + h\left[ f(t_i,y(t_i)) + \frac{1}{2}\nabla f(t_i,y(t_i)) + \frac{5}{12} \nabla^2 f(t_i, y(t_i)) + \frac{3}{8} \nabla^3 f(t_i, y(t_i)) \right]\\
+&=y(t_i) + h\left[ \frac{55}{24}f(t_i,y(t_i)) - \frac{59}{24}f(t_{i-1},y(t_{i-1})) + \frac{37}{24}f(t_{i-2},y(t_{i-2})) -\frac{3}{8}f(t_{i-3},y(t_{i-3}))\right]
+\end{align*}
+By aligning the coefficient of above equation with the equation given in the question. i.e.
+\[ y(t_i) + h\left[ a\cdot f(t_i,y(t_i)) +b\cdot f(t_{i-1},y(t_{i-1})) + c\cdot f(t_{i-2},y(t_{i-2})) + d\cdot f(t_{i-3},y(t_{i-3}))\right] \]
+We have 
+\[ \begin{cases}
+a = \frac{55}{24}\\
+b = -\frac{59}{24}\\
+c = \frac{37}{24}\\
+d = -\frac{3}{8}
+\end{cases} \] \hfill $\blacksquare$
+
+\section*{Question 2}
+\begin{itemize}
+	\item [(a)]
+	We first expand $ y(t_{i+1}) $:
+	\begin{align*}
+	y(t_{i+1}) &= y(t_i) + h\cdot y'(t_i) + \frac{h^2}{2}\cdot y''(t_i) + \mathcal{O}(h^3)\\
+	&= y(t_i) + h\cdot f(t_i,y(t_i)) + \frac{h^2}{2}\left(\frac{\partial f}{\partial t}(t_i, y(t_i)) + \frac{\partial f}{\partial y}(t_i,y(t_i))\cdot f(t_i, y(t_i))\right)+ \mathcal{O}(h^3)
+	\end{align*}
+	Then, we expand the equation $ w_{i+1} = w_i + a\cdot f(t_{i+1},w_{i+1}) + b\cdot f(t_i,w_i) $:
+	\begin{align*}
+	w_{i+1} &\approx w_i + a\cdot \left(f(t_{i},w_{i}) + h\cdot \frac{\partial f}{\partial t}(t_i, w_i) + (w_{i+1}-w_i)\cdot \frac{\partial f}{\partial y}(t_i,w_i) \right) + bf(t_i,w_i)\\
+	&\approx w_i + a\cdot \left( f(t_{i},w_{i}) + h\cdot \frac{\partial f}{\partial t}(t_i, w_i) + hf(t_i,w_i)\cdot \frac{\partial f}{\partial y}(t_i,w_i)  \right) + b\cdot f(t_i,w_i)\\
+	&=w_i + (a+b)\cdot f(t_i,w_i) + ah\cdot \left(\frac{\partial f}{\partial t}(t_i, w_i) + \frac{\partial f}{\partial y}(t_i,w_i)\cdot f(t_i,w_i) \right)\\
+	&=y(t_i) + h\cdot f(t_i,y(t_i)) + \frac{h^2}{2}\left(\frac{\partial f}{\partial t}(t_i, y(t_i)) + \frac{\partial f}{\partial y}(t_i,y(t_i))\cdot f(t_i, y(t_i))\right)
+	\end{align*}
+	By aligning the coefficient, we obtaint the following equation system:
+	\[ \begin{cases}
+	a+b = h\\
+	ah = \frac{h^2}{2}
+	\end{cases} \]
+	Therefore, $\boxed{ a = \frac{h}{2},\ b = \frac{h}{2} }$. \hfill $ \blacksquare $
+	
+	\item [(b)]
+	We first let $ u(t) = y(t),\ v(t) = y'(t) $. Then the we can obtain the system of IVP as the following:
+	\[ \begin{cases}
+	u'(t) = v \qquad\qquad\qquad u(0) = 0\\
+	v'(t) = 4u + 6e^{-t} \qquad\ v(0) = 0
+	\end{cases} \]
+	Now, call $ f_{(u)}(t,u,v) = \frac{du}{dt} = v$ and $ f_{(v)}(t,u,v) = \frac{dv}{dt} = 4u + 6e^{-t} $. Denoting $ U_i $ be the estimate of $ u(t_i) $ and $ V_i $ be the estimate of $ v(t_i) $, we obtian the following by using generalization of the Mid-point method:
+	\begin{align*}
+	U_{i+1} &= U_i + h\cdot f_{(u)}\left(t_i + \frac{h}{2},\ U_i +\frac{h}{2}f_{(u)}(t_i,U_i,V_i),\ V_i + \frac{h}{2}f_{(v)}(t_i,U_i,V_i)\right)\\
+	&=U_i + h\cdot \left(V_i + \frac{h}{2}f_{(v)}(t_i,U_i,V_i) \right) \qquad\qquad\qquad\qquad \text{(Since $ f_{(u)}(t,u,v) = v $)}\\
+	&=U_i + h\cdot \left(V_i + \frac{h}{2}\cdot \left(4U_i + 6e^{-t_i}\right)\right)\qquad\qquad\qquad \text{(Since $ f_{(v)}(t,u,v) = 4u + 6e^{-t} $)}\\
+	&=U_i + h\cdot \left(V_i + 2hU_i + 3he^{-t_i}\right)
+	\end{align*} and that $ U_0 = u(0) = 0 $.\\
+	Likewise, we can obtian the following for $ V_{i+1} $:
+	\begin{align*}
+	V_{i+1} &= V_i + h\cdot f_{(v)}\left(t_i + \frac{h}{2},\ U_i +\frac{h}{2}f_{(u)}(t_i,U_i,V_i),\ V_i + \frac{h}{2}f_{(v)}(t_i,U_i,V_i)\right)\\
+	&=V_i + h\cdot \left(4\left(U_i +\frac{h}{2}f_{(u)}(t_i,U_i,V_i)\right) + 6e^{-\left(t_i + \frac{h}{2}\right)}\right)\\
+	&=V_i + h\cdot \left(4U_i + 2hV_i + 6e^{-\left(t_i + \frac{h}{2}\right)} \right)
+	\end{align*} and that $ V_0 = v(0) = 0 $.\\
+	
+	Notice that for each step we know $ t_i,\ U_i,\ V_i $, thus, we can easily solve $ t_{i+1},\ U_{i+1},\ V_{i+1} $ from the above equation.
+	
+	Secondly, we generalize the formula we have for the One-step implicit method. From \textbf{(a)}, we see that $ w_{i+1} = w_i + \frac{h}{2}\cdot f(t_{i+1},w_{i+1}) + \frac{h}{2}f(t_{i},w_i) $. Thus, the generalization give us following:
+	\[\begin{cases}
+	U_{i+1} = U_i + \frac{h}{2}\cdot f_{(u)}(t_{i+1},U_{i+1},V_{i+1}) + \frac{h}{2} \cdot f_{(u)}(t_i,U_i,V_i)\\
+	V_{i+1} = V_i + \frac{h}{2}\cdot f_{(v)}(t_{i+1},U_{i+1},V_{i+1}) + \frac{h}{2} \cdot f_{(v)}(t_i,U_i,V_i)
+	\end{cases}\]
+	
+	Therefore, with the formula from above, we have the code which implement the above method and solve for the IVP given.\\
+	\textbf{Note:} The following code consider correcting both $ U_{i+1} $ and $ V_{i+1} $\\
+	\lstinputlisting{predictor_correct.m}
+	
+	\item [(c)]
+	The result from the console is:
+	\begin{verbatim}
+	>> predictor_correct
+	
+	ans =
+	
+	     3.1798
+	\end{verbatim}
+	Thus, the estimate of $ \boxed{y(1) = 3.1798} $.\\ (\textit{Note}: Another way to implement this predictor corrector method is NOT correcting $ V_{i+1} $ at all. In the code, this can be done by commenting line 41. The result obtianed is then 3.1400. In general, both method work fine for this IVP, as when $ h $ is set to be small, both methods give 3.1618, which is close to correct answer $ \displaystyle \frac{e^2}{2} + \frac{3e^{-2}}{2} - 2e^{-1} \approx 3.16177 $.)
+	
+\end{itemize}
+
+\section*{Question 3}
+From the question, $ f(t_{i+1},w_{i+1}) = w_{i+1}\cdot g(t_{i+1}) $, where $ g(t) $ is some known function. Then, we substitute this into the equation of Adams-Moulton 3-step implicit method, we have:
+\[ w_{i+1} = w_i + \frac{3}{8}h\cdot g(t_{i+1}) \cdot w_{i+1} + \frac{h}{24}\left( 19f(t_i,w_i) - 5f(t_{i-1},w_{i-1}) + f(t_{i-2},w_{i-2}) \right) \]
+Next, we can move the term $ \frac{3}{8}h\cdot g(t_{i+1})\cdot w_{i+1} $ to the left hand side:
+\[ \left(1 - \frac{3}{8}h\cdot g(t_{i+1}) \right) w_{i+1} = w_i + \frac{h}{24}\left( 19f(t_i,w_i) - 5f(t_{i-1},w_{i-1}) + f(t_{i-2},w_{i-2}) \right) \]
+Therefore, by expanding $ f(t_i,w_i) $ to $ f(t_{i-2},w_{i-2}) $ the explicit form is the following:
+\[ \boxed{w_{i+1} = \frac{w_i + \frac{h}{24}(19w_i\cdot g(t_i)-5w_{i-1}\cdot g(t_{i-1})+w_{i-2}\cdot g(t_{i-2}))}{1-\frac{3}{8}h\cdot g(t_{i+1})}} \]
+\hfill $ \blacksquare $
+
+\end{document}

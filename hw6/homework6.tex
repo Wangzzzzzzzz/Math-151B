@@ -1,0 +1,201 @@
+\documentclass[11pt]{article}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage[space]{grffile}
+\usepackage{adjustbox}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{fullpage}
+\usepackage{fancyhdr}
+\usepackage{xparse}
+\usepackage[makeroom]{cancel}
+\newcommand{\ctitle}[3]{\title{\vspace{-0.5in}\cnum, \ced\\Problem Set #1: #2}}
+\usepackage[usenames,dvipsnames,svgnames,table,hyperref]{xcolor}
+\usepackage{listings}
+\usepackage{color} %red, green, blue, yellow, cyan, magenta, black, white
+\definecolor{mygreen}{RGB}{28,172,0} % color values Red, Green, Blue
+\definecolor{mylilas}{RGB}{170,55,241}
+
+\renewcommand*{\theenumi}{\alph{enumi}}
+\renewcommand*\labelenumi{(\theenumi)}
+\renewcommand*{\theenumii}{\roman{enumii}}
+\renewcommand*\labelenumii{\theenumii.}
+
+\author{Zheng Wang (404855295)}
+\date{\today}
+\title{MATH 151B Homework 6}
+
+\begin{document}
+
+\lstset{language=Matlab,%
+	basicstyle=\footnotesize,
+	breaklines=true,%
+	morekeywords={matlab2tikz},
+	keywordstyle=\color{blue},%
+	morekeywords=[2]{1}, keywordstyle=[2]{\color{black}},
+	identifierstyle=\color{black},%
+	stringstyle=\color{mylilas},
+	commentstyle=\color{mygreen},%
+	showstringspaces=false,%without this there will be a symbol in the places where there is a space
+	numbers=left,%
+	numberstyle={\tiny \color{black}},% size of the numbers
+	numbersep=9pt, % this defines how far the numbers are from the text
+	emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasise
+	%emph=[2]{word1,word2}, emphstyle=[2]{style},
+}
+
+\maketitle
+\section*{Question 1}
+Define
+\[ \mathbf{x} = \begin{bmatrix}
+x_1\\x_2\\x_3
+\end{bmatrix} \qquad \text{and}\qquad \mathbf{F}(\mathbf{x}) = \begin{bmatrix}
+x_1^2 + x_2 -37 \\
+x_1 - x_2^2-5\\
+x_1 + x_2 + x_3 -3
+\end{bmatrix}
+\]
+We then compute the Jacobian matrix as follows
+\[ J(\mathbf{x}) = \begin{bmatrix}
+2x_1 & 1 & 0\\
+1 & -2x_2 & 0\\
+1 & 1 & 1
+\end{bmatrix}\]
+Now, since we have $ \mathbf{x}^{(0)} = [1,1,1]^t $ the first iteration of the Newton's Method is given as
+\begin{align*}
+\mathbf{x}^{(1)} &= \mathbf{x}^{(0)} - J(\mathbf{x}^{(0)})^{-1} \mathbf{F}(\mathbf{x}^{(0)})\\
+&= \begin{bmatrix}
+1\\1\\1
+\end{bmatrix} - \begin{bmatrix}
+2 & 1 & 0\\ 1 & -2 & 0\\ 1 & 1 & 1
+\end{bmatrix}^{-1} \begin{bmatrix}
+-35\\-5\\0
+\end{bmatrix}= \begin{bmatrix}
+16\\6\\-19
+\end{bmatrix}
+\end{align*}
+We observe that the correct solution of the system is $(6,1,-4)^T$, we see that the error of the first iteration is $||(6,1,-4)^T-(16,6,-19)^T ||= 18.7083$, larger than the initial error of $7.0711$. This is possible for Newton's method, this is because the assumption of the convergence for Newton's Method requires the initial value to be "close" enough to the actual solution, it is possible that $(1,1,1)^T$ does not satisfy this condition.\\\\
+Using the following code, we obtain that the solution with \textbf{4} iterations is
+$ \mathbf{x}^{(4)} = \begin{bmatrix}
+6.0006\\1.2091\\-4.2097
+\end{bmatrix}$ and the solution with \textbf{8} iterations is  $\begin{bmatrix}
+6.0000\\1.0000\\-4.0000
+\end{bmatrix}$. \\The solution obtianed by 8 iteration is exact, with error of 0, and the solution with 4 iteration is very close to the actual solution, with error of 0.2961 ($ ||(6.0006,1.2091,-4.2097)^T - (6,1,-4)^T || = 0.2961 $). In general, 8 iteration give better estimate of the solution than 4 iteration.
+\lstinputlisting{q1.m}
+The output from the consoles are listed below:
+\begin{verbatim}
+>> q1
+Solution with 4 iteration is:
+    6.0006
+    1.2091
+   -4.2097
+
+Solution with 8 iteration is:
+    6.0000
+    1.0000
+   -4.0000
+\end{verbatim}
+
+\section*{Question 2}
+We can use the following finite difference formula (The error terms are truncated):
+\[y''(x_i) = \frac{y(x_{i+1})-2y(x_i)+y(x_{i-1})}{h^2} \quad \text{and}\]
+\[y'(x_i) = \frac{y(x_{i+1})-y(x_{i-1})}{2h}\]
+to obtain the following system of equations for $i = 1,2,...,7$:
+\[\frac{y(x_{i+1})-2y(x_i)+y(x_{i-1})}{h^2} = f\left(x_i, y(x_i), \frac{y(x_{i+1})-y(x_{i-1})}{2h}\right)\]
+In this perticular case, we see that since $f(x,y,y') = 2y^3$, we have the systems of equations has the following form (for $i = 1,2,...,7$):
+\[2h^2w_i^3 - w_{i+1} + 2w_i - w_{i-1} = 0\]
+Now as $\displaystyle w_0 = \frac{1}{2}$ and $\displaystyle w_8 = \frac{1}{3}$, the system of equations are
+\[\begin{cases}
+2h^2w_1^3 + 2w_1 - w_2 = \frac{1}{2}\\
+2h^2w_2^3 - w_{3} + 2w_2 - w_{1} = 0\\
+\qquad \vdots \qquad \qquad \vdots\\
+2h^2w_6^3 - w_{7} + 2w_6 - w_{5} = 0\\
+2h^2w_7^3 + 2w_7 - w_{6} = \frac{1}{3}
+\end{cases}\]
+Therefore, we could define $\mathbf{w} = \begin{bmatrix}
+w_1\\w_2\\ \vdots \\w_7
+\end{bmatrix}$ and $ \mathbf{F}(\mathbf{w}) = \begin{bmatrix}
+2h^2w_1^3 + 2w_1 - w_2 - \frac{1}{2}\\
+2h^2w_2^3 - w_{3} + 2w_2 - w_{1}\\
+\vdots \\
+2h^2w_6^3 - w_{7} + 2w_6 - w_{5}\\
+2h^2w_7^3 + 2w_7 - w_{6} - \frac{1}{3}
+\end{bmatrix}$. Thus, $J(\mathbf(w)) = \begin{bmatrix}
+6h^2w_1^2 + 2 & -1 & 0 & \dots & \dots & \dots & 0\\
+-1 & 6h^2w_2^2 + 2 & -1 & 0 & \dots & \dots & 0\\
+0 & -1 & 6h^2w_3^2 + 2 & -1 & 0 & \dots & 0\\
+\vdots & \ddots & \ddots & \ddots & \ddots & \ddots & \vdots\\
+\vdots & & \ddots & \ddots & \ddots & \ddots & 0\\
+\vdots & & & \ddots & \ddots & \ddots & -1\\
+0 & \dots & \dots & \dots & 0 & -1 & 6h^2w_7^2 + 2
+\end{bmatrix}$.\hfill\\\\\\
+Thus, we can use the following code to compute that $\displaystyle y\left(-\frac{1}{2}\right) = 0.4000$ (Which correspond to $w_4$, the forth element in the output):
+\lstinputlisting{q2.m}
+The output from the console is:
+\begin{verbatim}
+>> q2
+    0.4706
+    0.4445
+    0.4211
+    0.4000
+    0.3810
+    0.3637
+    0.3478
+\end{verbatim}
+
+\section*{Question 3}
+We first define $\mathbf{x} = \begin{bmatrix}
+x_1\\x_2\\x_3
+\end{bmatrix}$ and define $ \mathbf{F}(\mathbf{x}) = \begin{bmatrix}
+x_1^3 + x_1^2x_2 - x_1x_3 + 6\\
+e^{x_1} + e^{x_2} - x_3\\
+x_2^2 - 2x_1x_3 - 4
+\end{bmatrix}$.\\
+We can then compute the Jacobian, which is the following:
+\[ J(\mathbf{x}) = \begin{bmatrix}
+3x_1^2 + 2x_1x_2 - x_3 & x_1^2 & -x_1\\
+e^{x_1} & e^{x_2} & -1\\
+-2x_3 & 2x_2 & -2x_1
+\end{bmatrix} \]
+Thus, let $g(\mathbf{x}) = ||\mathbf{F}(\mathbf{x})||_2^2$, and the fact that $\nabla g(\mathbf{x}) = 2J(\mathbf{x})^T\mathbf{F}(\mathbf{x})$, we can implement the following algorithm to obtain the solution of the function.
+\lstinputlisting{q3.m}
+The console output the following information:
+\begin{verbatim}
+>> q3
+Use Tolerance = 0.01
+Iteration number:   590
+
+Solution find is:
+    0.1565
+    2.2333
+    9.5493
+
+Confirm that the solution is correct
+    4.5639
+    0.9505
+   -2.0018
+
+
+
+Use Tolerance = 10^-5
+Iteration number:      144145
+
+Solution find is:
+    0.1216
+    3.7185
+   42.2514
+
+Confirm that the solution is correct
+    0.9178
+    0.0805
+   -0.4507
+\end{verbatim}
+We can see that the solution from Steepest Desent is not exact, but close to the actual result. This is because the stopping condition of the algorithm is that $g(\mathbf{x})$ no longer changes too much. This could happen when the gradient is small. However, since the gradient is not exactly zero, the $\mathbf{x}$ we obtianed will not be the actual solution. The solution will be closer to the actual solution if we set the tolerance to be smaller, as shown by the result of the code. When the tolerance is set to $10^{-5}$, the solution we obtianed is $(0.1216,3.7185,42.2514)^T$.
+
+
+
+
+\end{document}
